@@ -16,4 +16,8 @@ public class ToDoListService {
     public List<Object> getToDoList() {
         return toDoRepository.findAll();
     }
+
+    public void addToDo(Object toDo) {
+        toDoRepository.save(toDo);
+    }
 }

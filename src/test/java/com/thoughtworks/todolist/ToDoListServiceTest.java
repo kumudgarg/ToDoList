@@ -17,8 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ToDoListServiceTest {
 
@@ -44,12 +43,19 @@ public class ToDoListServiceTest {
     @Test
     public void givenARequestToShowAllToDos_WhenDbHasThreeToDosStored_ShouldReturnListOfThreeToDos() {
         List<Object> expectedListOfToDos = new ArrayList();
-        Object dummyObject = new Object();
-        expectedListOfToDos.add(dummyObject);
-        expectedListOfToDos.add(dummyObject);
-        expectedListOfToDos.add(dummyObject);
+        Object dummyToDo = new Object();
+        expectedListOfToDos.add(dummyToDo);
+        expectedListOfToDos.add(dummyToDo);
+        expectedListOfToDos.add(dummyToDo);
         when(toDoRepository.findAll()).thenReturn(expectedListOfToDos);
         List toDoList = toDoListService.getToDoList();
         Assert.assertEquals(3,toDoList.size());
+    }
+
+    @Test
+    void givenANewToDo_ShouldGetAddedToTheDb() {
+        Object dummyTodo = new Object();
+        toDoListService.addToDo(dummyTodo);
+        verify(toDoRepository).save(dummyTodo);
     }
 }
