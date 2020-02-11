@@ -4,15 +4,11 @@ package com.thoughtworks.todolist;
 import com.thoughtworks.todolist.repository.ToDoRepository;
 import com.thoughtworks.todolist.service.ToDoListService;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,16 +20,23 @@ public class ToDoListServiceTest {
     @Mock
     private ToDoRepository toDoRepository;
 
+    List<Object> listOfToDos;
+
     @InjectMocks
     private ToDoListService toDoListService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
+        this.listOfToDos = new ArrayList();
+        Object dummyToDo = new Object();
+        listOfToDos.add(dummyToDo);
+        listOfToDos.add(dummyToDo);
+        listOfToDos.add(dummyToDo);
     }
 
     @Test
-    public void givenARequestToShowAllToDos_WhenDbHasNoToDosStored_ShouldReturnAListOfToDoNotesSizeZero() {
+    void givenARequestToShowAllToDos_WhenDbHasNoToDosStored_ShouldReturnAListOfToDoNotesSizeZero() {
         List<Object> expectedListOfToDos = new ArrayList();
         when(toDoRepository.findAll()).thenReturn(expectedListOfToDos);
         List toDos = toDoListService.getToDoList();
@@ -41,13 +44,8 @@ public class ToDoListServiceTest {
     }
 
     @Test
-    public void givenARequestToShowAllToDos_WhenDbHasThreeToDosStored_ShouldReturnListOfThreeToDos() {
-        List<Object> expectedListOfToDos = new ArrayList();
-        Object dummyToDo = new Object();
-        expectedListOfToDos.add(dummyToDo);
-        expectedListOfToDos.add(dummyToDo);
-        expectedListOfToDos.add(dummyToDo);
-        when(toDoRepository.findAll()).thenReturn(expectedListOfToDos);
+    void givenARequestToShowAllToDos_WhenDbHasThreeToDosStored_ShouldReturnListOfThreeToDos() {
+        when(toDoRepository.findAll()).thenReturn(listOfToDos);
         List toDoList = toDoListService.getToDoList();
         Assert.assertEquals(3,toDoList.size());
     }
@@ -57,5 +55,11 @@ public class ToDoListServiceTest {
         Object dummyTodo = new Object();
         toDoListService.addToDo(dummyTodo);
         verify(toDoRepository).save(dummyTodo);
+    }
+
+    @Test
+    void givenMultipleToDos_ShouldGetAddedToTheDb() {
+        toDoListService.addToDo(listOfToDos);
+        verify(toDoRepository).save(listOfToDos);
     }
 }
