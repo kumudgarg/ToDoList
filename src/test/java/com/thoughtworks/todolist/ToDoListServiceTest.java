@@ -96,4 +96,30 @@ public class ToDoListServiceTest {
             Assert.assertEquals(404,e.statusCode.value());
         }
     }
+
+    @Test
+    void givenAnIdOfToDoNote_WhenPresentInTheDb_ShouldGetDeleted() {
+        Long toDoId = 1L;
+        ToDoNote existingToDo = new ToDoNote();
+        when(toDoRepository.findToDoNoteByToDoId(1L)).thenReturn(existingToDo);
+        when(env.getProperty("status.toDo.noteDeleteSucceed")).thenReturn("Note deleted successfully!!");
+        Response response = toDoListService.deleteToDo(toDoId);
+        verify(toDoRepository).delete(existingToDo);
+        Assert.assertEquals(200, response.getStatusCode());
+    }
+
+    @Test
+    void givenAnIdOfToDoNote_WhenNotPresentInTheDb_ShouldThrowException() {
+        try {
+            Long toDoId = 1L;
+            ToDoNote existingToDo = new ToDoNote();
+            when(toDoRepository.findToDoNoteByToDoId(1L)).thenReturn(null);
+            when(env.getProperty("status.toDo.noteNotFound")).thenReturn("Note Not Found!!");
+            Response response = toDoListService.deleteToDo(toDoId);
+        } catch (NoteNotFoundException e) {
+            Assert.assertEquals(404, e.statusCode.value());
+        }
+    }
+
+
 }

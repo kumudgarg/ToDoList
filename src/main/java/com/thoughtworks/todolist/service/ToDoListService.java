@@ -45,4 +45,12 @@ public class ToDoListService {
     }
 
 
+    public Response deleteToDo(Long toDoId) {
+        ToDoNote toDoNote = toDoRepository.findToDoNoteByToDoId(toDoId);
+        if(toDoNote == null){
+            throw new NoteNotFoundException(environment.getProperty("status.toDo.noteNotFound"),HttpStatus.NOT_FOUND);
+        }
+        toDoRepository.delete(toDoNote);
+        return new Response(HttpStatus.OK.value(),environment.getProperty("status.toDo.noteDeleteSucceed"));
+    }
 }
