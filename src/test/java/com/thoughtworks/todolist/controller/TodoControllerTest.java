@@ -1,6 +1,7 @@
 package com.thoughtworks.todolist.controller;
 
 import com.thoughtworks.todolist.exception.NoteNotFoundException;
+import com.thoughtworks.todolist.exception.Response;
 import com.thoughtworks.todolist.model.ToDoNote;
 import com.thoughtworks.todolist.service.ToDoListService;
 import org.junit.Assert;
@@ -58,5 +59,11 @@ class TodoControllerTest {
         }
     }
 
-
+    @Test
+    void givenAToDoNote_WhenAdded_ShouldReturnStatuscode200() {
+        ToDoNote toDoNote = new ToDoNote();
+        when(toDoListService.addToDo(toDoNote)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
+        ResponseEntity<Response> responseEntity = controller.addToDoNote(toDoNote);
+        Assert.assertEquals(200,responseEntity.getStatusCode().value());
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,5 +29,11 @@ public class ToDoController {
     public ResponseEntity<List<ToDoNote>> getAllToDoNotes() {
         List<ToDoNote> toDoList = toDoService.getToDoList();
         return new ResponseEntity<>(toDoList, HttpStatus.OK);
+    }
+
+    @PostMapping("/addToDoNote")
+    public ResponseEntity<Response> addToDoNote(ToDoNote toDoNote) {
+        Response response = toDoService.addToDo(toDoNote);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }
