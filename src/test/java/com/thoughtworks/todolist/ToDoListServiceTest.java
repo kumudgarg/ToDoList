@@ -1,6 +1,10 @@
 package com.thoughtworks.todolist;
 
 
+import com.thoughtworks.todolist.exception.NoteNotFoundException;
+import com.thoughtworks.todolist.exception.Response;
+import com.thoughtworks.todolist.model.ToDoNote;
+import com.thoughtworks.todolist.model.ToDoNoteUpdateDto;
 import com.thoughtworks.todolist.repository.ToDoRepository;
 import com.thoughtworks.todolist.service.ToDoListService;
 import org.junit.Assert;
@@ -9,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.env.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +25,10 @@ public class ToDoListServiceTest {
     @Mock
     private ToDoRepository toDoRepository;
 
-    List<Object> listOfToDos;
+    @Mock
+    private Environment env;
+
+    List<ToDoNote> listOfToDos;
 
     @InjectMocks
     private ToDoListService toDoListService;
@@ -29,7 +37,7 @@ public class ToDoListServiceTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         this.listOfToDos = new ArrayList();
-        Object dummyToDo = new Object();
+        ToDoNote dummyToDo = new ToDoNote();
         listOfToDos.add(dummyToDo);
         listOfToDos.add(dummyToDo);
         listOfToDos.add(dummyToDo);
@@ -37,29 +45,39 @@ public class ToDoListServiceTest {
 
     @Test
     void givenARequestToShowAllToDos_WhenDbHasNoToDosStored_ShouldReturnAListOfToDoNotesSizeZero() {
-        List<Object> expectedListOfToDos = new ArrayList();
-        when(toDoRepository.findAll()).thenReturn(expectedListOfToDos);
-        List toDos = toDoListService.getToDoList();
-        Assert.assertEquals(0, toDos.size());
+        try {
+            List<ToDoNote> expectedListOfToDos = new ArrayList();
+            when(toDoRepository.findAll()).thenReturn(expectedListOfToDos);
+            when(env.getProperty("status.toDo.notesNotFound")).thenReturn("No Notes!!");
+            List toDos = toDoListService.getToDoList();
+        } catch (NoteNotFoundException e) {
+            Assert.assertEquals(404, e.statusCode.value());
+        }
     }
 
     @Test
     void givenARequestToShowAllToDos_WhenDbHasThreeToDosStored_ShouldReturnListOfThreeToDos() {
         when(toDoRepository.findAll()).thenReturn(listOfToDos);
         List toDoList = toDoListService.getToDoList();
-        Assert.assertEquals(3,toDoList.size());
+        Assert.assertEquals(3, toDoList.size());
     }
 
     @Test
     void givenANewToDo_ShouldGetAddedToTheDb() {
-        Object dummyTodo = new Object();
-        toDoListService.addToDo(dummyTodo);
+        ToDoNote dummyTodo = new ToDoNote();
+        Response response = toDoListService.addToDo(dummyTodo);
         verify(toDoRepository).save(dummyTodo);
+        Assert.assertEquals(200, response.getStatusCode());
     }
 
     @Test
-    void givenMultipleToDos_ShouldGetAddedToTheDb() {
-        toDoListService.addToDo(listOfToDos);
-        verify(toDoRepository).save(listOfToDos);
+    void givenAnIdAndAToDoNoteThatHasBeenEdited_WhenPresentInTheDb_ShouldGetUpdated() {
+        Long toDoId = 1L;
+        ToDoNoteUpdateDto updatedNote = new ToDoNoteUpdateDto("updated note");
+        ToDoNote existingNote = new ToDoNote(1L,"exisiting message");
+        when(toDoRepository.findToDoNoteByToDoId(toDoId)).thenReturn(existingNote);
+        Response response = toDoListService.updateToDo(toDoId, updatedNote);
+        verify(toDoRepository).save(existingNote);
+        Assert.assertEquals(200,response.getStatusCode());
     }
 }
