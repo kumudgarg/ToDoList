@@ -80,4 +80,20 @@ public class ToDoListServiceTest {
         verify(toDoRepository).save(existingNote);
         Assert.assertEquals(200,response.getStatusCode());
     }
+
+    @Test
+    void givenAnIdAndAToDoNoteThatHasBeenEdited_WhenNotPresentInTheDb_ShouldThrowException() {
+        try {
+            Long toDoId = 1L;
+            ToDoNoteUpdateDto updatedNote = new ToDoNoteUpdateDto("updated note");
+            when(toDoRepository.findToDoNoteByToDoId(toDoId)).thenReturn(null);
+            when(env.getProperty("status.toDo.noteNotFound")).thenReturn("Note Not Found!!");
+            Response response = toDoListService.updateToDo(toDoId, updatedNote);
+        }catch (NoteNotFoundException e){
+            e.printStackTrace();
+            System.out.println(e.statusCode.value());
+            System.out.println(e.getMessage());
+            Assert.assertEquals(404,e.statusCode.value());
+        }
+    }
 }
