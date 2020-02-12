@@ -3,6 +3,7 @@ package com.thoughtworks.todolist.controller;
 import com.thoughtworks.todolist.exception.NoteNotFoundException;
 import com.thoughtworks.todolist.exception.Response;
 import com.thoughtworks.todolist.model.ToDoNote;
+import com.thoughtworks.todolist.model.ToDoNoteUpdateDto;
 import com.thoughtworks.todolist.service.ToDoListService;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +51,7 @@ class TodoControllerTest {
 
 
     @Test
-    void givenARequestToGetAllToDoNotes_WhenNotAvailable_ShouldReturnListOfToDos() {
+    void givenARequestToGetAllToDoNotes_WhenNotAvailable_ShouldThrowException() {
         try {
             when(toDoListService.getToDoList()).thenThrow(new NoteNotFoundException("No Notes!!", HttpStatus.NOT_FOUND));
             ResponseEntity<List<ToDoNote>> allToDoNotes = controller.getAllToDoNotes();
@@ -64,6 +65,16 @@ class TodoControllerTest {
         ToDoNote toDoNote = new ToDoNote();
         when(toDoListService.addToDo(toDoNote)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
         ResponseEntity<Response> responseEntity = controller.addToDoNote(toDoNote);
+        Assert.assertEquals(200,responseEntity.getStatusCode().value());
+    }
+
+
+    @Test
+    void givenAnUpdatedToDoNote_WhenExistsInDb_ShouldGetStoredInTheDb() {
+        Long toDoId = 1L;
+        ToDoNoteUpdateDto updatedToDo = new ToDoNoteUpdateDto();
+        when(toDoListService.updateToDo(toDoId,updatedToDo)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
+        ResponseEntity<Response> responseEntity = controller.updateToDo(toDoId,updatedToDo);
         Assert.assertEquals(200,responseEntity.getStatusCode().value());
     }
 }
