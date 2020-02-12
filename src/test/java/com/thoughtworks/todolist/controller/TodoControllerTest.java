@@ -77,4 +77,13 @@ class TodoControllerTest {
         ResponseEntity<Response> responseEntity = controller.updateToDo(toDoId,updatedToDo);
         Assert.assertEquals(200,responseEntity.getStatusCode().value());
     }
+
+    @Test
+    void givenAToDoNoteID_whenDeleted_ShouldReturnStatusCode200() {
+        Long toDoId = 1L;
+        ToDoNote toDoNote =new ToDoNote();
+        when(toDoListService.deleteToDo(toDoId)).thenReturn(new Response(HttpStatus.OK.value(),"Note deleted successfully!!"));
+        ResponseEntity<Response> responseEntity = controller.deleteToDoNote(toDoId);
+        Assert.assertEquals(200,responseEntity.getStatusCode().value());
+    }
 }

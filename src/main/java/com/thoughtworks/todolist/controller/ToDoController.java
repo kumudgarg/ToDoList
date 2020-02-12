@@ -42,4 +42,9 @@ public class ToDoController {
         Response response = toDoService.updateToDo(toDoId, updatedToDo);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
+
+    public ResponseEntity<Response> deleteToDoNote(Long toDoId) {
+        Response response = toDoService.deleteToDo(toDoId);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 }
