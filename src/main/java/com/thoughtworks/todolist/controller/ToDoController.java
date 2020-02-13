@@ -2,7 +2,7 @@ package com.thoughtworks.todolist.controller;
 
 import com.thoughtworks.todolist.exception.Response;
 import com.thoughtworks.todolist.model.ToDoNote;
-import com.thoughtworks.todolist.model.ToDoNoteUpdateDto;
+import com.thoughtworks.todolist.model.ToDoDto;
 import com.thoughtworks.todolist.service.ToDoListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,13 +29,13 @@ public class ToDoController {
     }
 
     @PostMapping("/addToDoNote")
-    public ResponseEntity<Response> addToDoNote(@RequestBody ToDoNoteUpdateDto toDoNote) {
+    public ResponseEntity<Response> addToDoNote(@RequestBody ToDoDto toDoNote) {
         Response response = toDoService.addToDo(toDoNote);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @PutMapping("/updateToDo/{toDoId}")
-    public ResponseEntity<Response> updateToDo(@PathVariable Long toDoId, @RequestBody ToDoNoteUpdateDto updatedToDo) {
+    public ResponseEntity<Response> updateToDo(@PathVariable Long toDoId, @RequestBody ToDoDto updatedToDo) {
         Response response = toDoService.updateToDo(toDoId, updatedToDo);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }

@@ -4,7 +4,7 @@ package com.thoughtworks.todolist;
 import com.thoughtworks.todolist.exception.NoteNotFoundException;
 import com.thoughtworks.todolist.exception.Response;
 import com.thoughtworks.todolist.model.ToDoNote;
-import com.thoughtworks.todolist.model.ToDoNoteUpdateDto;
+import com.thoughtworks.todolist.model.ToDoDto;
 import com.thoughtworks.todolist.repository.ToDoRepository;
 import com.thoughtworks.todolist.service.ToDoListService;
 import org.junit.Assert;
@@ -37,13 +37,13 @@ public class ToDoListServiceTest {
     @InjectMocks
     private ToDoListService toDoListService;
 
-    private ToDoNoteUpdateDto dummyTodo;
+    private ToDoDto dummyTodo;
     private ToDoNote toDoNote;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        this.dummyTodo = new ToDoNoteUpdateDto();
+        this.dummyTodo = new ToDoDto();
         this.toDoNote = new ToDoNote();
         this.listOfToDos = new ArrayList();
         ToDoNote dummyToDo = new ToDoNote();

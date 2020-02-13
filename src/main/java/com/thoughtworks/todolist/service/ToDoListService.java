@@ -3,7 +3,7 @@ package com.thoughtworks.todolist.service;
 import com.thoughtworks.todolist.exception.NoteNotFoundException;
 import com.thoughtworks.todolist.exception.Response;
 import com.thoughtworks.todolist.model.ToDoNote;
-import com.thoughtworks.todolist.model.ToDoNoteUpdateDto;
+import com.thoughtworks.todolist.model.ToDoDto;
 import com.thoughtworks.todolist.repository.ToDoRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +33,13 @@ public class ToDoListService {
         return toDoNotes;
     }
 
-    public Response addToDo(ToDoNoteUpdateDto toDoDto) {
+    public Response addToDo(ToDoDto toDoDto) {
         ToDoNote toDoNote = mapper.map(toDoDto, ToDoNote.class);
         toDoRepository.save(toDoNote);
         return new Response(HttpStatus.OK.value(),environment.getProperty("status.toDo.noteAddSucceed"));
     }
 
-    public Response updateToDo(Long id, ToDoNoteUpdateDto updatedToDoNote) {
+    public Response updateToDo(Long id, ToDoDto updatedToDoNote) {
         ToDoNote toDoNote = toDoRepository.findToDoNoteByToDoId(id);
         if(toDoNote == null){
             throw new NoteNotFoundException(environment.getProperty("status.toDo.noteNotFound"),HttpStatus.NOT_FOUND);

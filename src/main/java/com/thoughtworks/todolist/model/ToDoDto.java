@@ -3,15 +3,15 @@ package com.thoughtworks.todolist.model;
 import lombok.Getter;
 import lombok.Setter;
 
-public class ToDoNoteUpdateDto {
+public class ToDoDto {
 
     @Getter @Setter
     String toDoDescription;
 
-    public ToDoNoteUpdateDto() {
+    public ToDoDto() {
     }
 
-    public ToDoNoteUpdateDto(String updated_note) {
+    public ToDoDto(String updated_note) {
         this.toDoDescription = updated_note;
     }
 }

@@ -3,7 +3,7 @@ package com.thoughtworks.todolist.controller;
 import com.thoughtworks.todolist.exception.NoteNotFoundException;
 import com.thoughtworks.todolist.exception.Response;
 import com.thoughtworks.todolist.model.ToDoNote;
-import com.thoughtworks.todolist.model.ToDoNoteUpdateDto;
+import com.thoughtworks.todolist.model.ToDoDto;
 import com.thoughtworks.todolist.service.ToDoListService;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,12 +34,12 @@ class TodoControllerTest {
 
     private long toDoId;
 
-    private ToDoNoteUpdateDto inputToDo;
+    private ToDoDto inputToDo;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        this.inputToDo = new ToDoNoteUpdateDto();
+        this.inputToDo = new ToDoDto();
         this.toDoNote = new ToDoNote();
         this.toDoId = 1L;
 
@@ -77,7 +77,7 @@ class TodoControllerTest {
 
     @Test
     void givenAnUpdatedToDoNote_WhenExistsInDb_ShouldGetStoredInTheDbAndReturnStatusCode200() {
-        ToDoNoteUpdateDto updatedToDo = new ToDoNoteUpdateDto();
+        ToDoDto updatedToDo = new ToDoDto();
         when(toDoListService.updateToDo(toDoId,updatedToDo)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
         ResponseEntity<Response> responseEntity = controller.updateToDo(toDoId,updatedToDo);
         Assert.assertEquals(200,responseEntity.getStatusCode().value());
@@ -86,7 +86,7 @@ class TodoControllerTest {
     @Test
     void givenAnUpdatedToDoNote_WhenDoesNotExistsInDb_ShouldThrowAnExceptionWithStatusCode404() {
         try {
-            ToDoNoteUpdateDto updatedToDo = new ToDoNoteUpdateDto();
+            ToDoDto updatedToDo = new ToDoDto();
             when(toDoListService.updateToDo(toDoId,updatedToDo)).thenThrow(new NoteNotFoundException("Note Not Found!!", HttpStatus.NOT_FOUND));
             ResponseEntity<Response> responseEntity = controller.updateToDo(toDoId, updatedToDo);
         } catch(NoteNotFoundException e) {
