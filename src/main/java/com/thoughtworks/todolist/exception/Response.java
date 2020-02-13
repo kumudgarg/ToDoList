@@ -15,11 +15,13 @@ public class Response {
     }
 
     public Response(int statusCode, String message) {
+        super();
         this.statusCode = statusCode;
         this.message = message;
     }
 
     public Response(String message) {
+        super();
         this.message = message;
     }
 }

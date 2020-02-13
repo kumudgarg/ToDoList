@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/toDoNotes")
+@RequestMapping("/toDoNote")
 public class ToDoController {
 
     @Autowired
@@ -22,25 +22,25 @@ public class ToDoController {
         this.toDoService = toDoService;
     }
 
-    @GetMapping("/getAllToDoNotes")
+    @GetMapping("/getAll")
     public ResponseEntity<List<ToDoNote>> getAllToDoNotes() {
         List<ToDoNote> toDoList = toDoService.getToDoList();
         return new ResponseEntity<>(toDoList, HttpStatus.OK);
     }
 
-    @PostMapping("/addToDoNote")
+    @PostMapping("/add")
     public ResponseEntity<Response> addToDoNote(@RequestBody ToDoDto toDoNote) {
         Response response = toDoService.addToDo(toDoNote);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @PutMapping("/updateToDo/{toDoId}")
+    @PutMapping("/update/{toDoId}")
     public ResponseEntity<Response> updateToDo(@PathVariable Long toDoId, @RequestBody ToDoDto updatedToDo) {
         Response response = toDoService.updateToDo(toDoId, updatedToDo);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @DeleteMapping("/deleteToDo/{toDoId}")
+    @DeleteMapping("/delete/{toDoId}")
     public ResponseEntity<Response> deleteToDoNote(@PathVariable Long toDoId) {
         Response response = toDoService.deleteToDo(toDoId);
         return new ResponseEntity<>(response,HttpStatus.OK);
