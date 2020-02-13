@@ -27,23 +27,28 @@ class TodoControllerTest {
     @Mock
     private ToDoListService toDoListService;
 
-    private List<ToDoNote> toDoNoteList;
-
     @InjectMocks
     private ToDoController controller;
+
+    private ToDoNote toDoNote;
+
+    private long toDoId;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        ToDoNote toDoNote = new ToDoNote();
-        this.toDoNoteList = new ArrayList<>();
-        toDoNoteList.add(toDoNote);
-        toDoNoteList.add(toDoNote);
-        toDoNoteList.add(toDoNote);
+        this.toDoNote = new ToDoNote();
+        this.toDoId = 1L;
+
     }
 
     @Test
-    void givenARequestToGetAllToDoNotes_WhenAvailable_ShouldReturnListOfToDos() {
+    void givenARequestToGetAllToDoNotes_WhenAvailable_ShouldReturnListOfToDosWithStatusCode200() {
+        List<ToDoNote> toDoNoteList;
+        toDoNoteList = new ArrayList<>();
+        toDoNoteList.add(toDoNote);
+        toDoNoteList.add(toDoNote);
+        toDoNoteList.add(toDoNote);
         when(toDoListService.getToDoList()).thenReturn(toDoNoteList);
         ResponseEntity<List<ToDoNote>> allToDoNotes = controller.getAllToDoNotes();
         Assert.assertEquals(200,allToDoNotes.getStatusCode().value());
@@ -51,7 +56,7 @@ class TodoControllerTest {
 
 
     @Test
-    void givenARequestToGetAllToDoNotes_WhenNotAvailable_ShouldThrowException() {
+    void givenARequestToGetAllToDoNotes_WhenNotAvailable_ShouldThrowExceptionWithStatusCode404() {
         try {
             when(toDoListService.getToDoList()).thenThrow(new NoteNotFoundException("No Notes!!", HttpStatus.NOT_FOUND));
             ResponseEntity<List<ToDoNote>> allToDoNotes = controller.getAllToDoNotes();
@@ -61,17 +66,14 @@ class TodoControllerTest {
     }
 
     @Test
-    void givenAToDoNote_WhenAdded_ShouldReturnStatuscode200() {
-        ToDoNote toDoNote = new ToDoNote();
+    void givenAToDoNote_WhenAddedToTheDb_ShouldReturnStatuscode200() {
         when(toDoListService.addToDo(toDoNote)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
         ResponseEntity<Response> responseEntity = controller.addToDoNote(toDoNote);
         Assert.assertEquals(200,responseEntity.getStatusCode().value());
     }
 
-
     @Test
-    void givenAnUpdatedToDoNote_WhenExistsInDb_ShouldGetStoredInTheDb() {
-        Long toDoId = 1L;
+    void givenAnUpdatedToDoNote_WhenExistsInDb_ShouldGetStoredInTheDbAndReturnStatusCode200() {
         ToDoNoteUpdateDto updatedToDo = new ToDoNoteUpdateDto();
         when(toDoListService.updateToDo(toDoId,updatedToDo)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
         ResponseEntity<Response> responseEntity = controller.updateToDo(toDoId,updatedToDo);
@@ -79,11 +81,30 @@ class TodoControllerTest {
     }
 
     @Test
-    void givenAToDoNoteID_whenDeleted_ShouldReturnStatusCode200() {
-        Long toDoId = 1L;
-        ToDoNote toDoNote =new ToDoNote();
+    void givenAnUpdatedToDoNote_WhenDoesNotExistsInDb_ShouldThrowAnExceptionWithStatusCode404() {
+        try {
+            ToDoNoteUpdateDto updatedToDo = new ToDoNoteUpdateDto();
+            when(toDoListService.updateToDo(toDoId,updatedToDo)).thenThrow(new NoteNotFoundException("Note Not Found!!", HttpStatus.NOT_FOUND));
+            ResponseEntity<Response> responseEntity = controller.updateToDo(toDoId, updatedToDo);
+        } catch(NoteNotFoundException e) {
+            Assert.assertEquals(404,e.statusCode.value());
+        }
+    }
+
+    @Test
+    void givenAnIdToDeleteAToDo_whenExistsInDbAndGetsDeleted_ShouldReturnStatusCode200() {
         when(toDoListService.deleteToDo(toDoId)).thenReturn(new Response(HttpStatus.OK.value(),"Note deleted successfully!!"));
         ResponseEntity<Response> responseEntity = controller.deleteToDoNote(toDoId);
         Assert.assertEquals(200,responseEntity.getStatusCode().value());
+    }
+
+    @Test
+    void givenAnIdToDeleteAToDo_whenDoesNotExistInDb_ShouldReturnThrowExceptionWithStatusCode404() {
+        try {
+            when(toDoListService.deleteToDo(toDoId)).thenThrow(new NoteNotFoundException("Note Not Found!!", HttpStatus.NOT_FOUND));
+            ResponseEntity<Response> responseEntity = controller.deleteToDoNote(toDoId);
+        } catch (NoteNotFoundException e) {
+            Assert.assertEquals(404,e.statusCode.value());
+        }
     }
 }

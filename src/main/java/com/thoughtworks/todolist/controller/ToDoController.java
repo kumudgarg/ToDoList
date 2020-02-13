@@ -7,11 +7,7 @@ import com.thoughtworks.todolist.service.ToDoListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,17 +29,19 @@ public class ToDoController {
     }
 
     @PostMapping("/addToDoNote")
-    public ResponseEntity<Response> addToDoNote(ToDoNote toDoNote) {
+    public ResponseEntity<Response> addToDoNote(@RequestBody ToDoNote toDoNote) {
         Response response = toDoService.addToDo(toDoNote);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    public ResponseEntity<Response> updateToDo(Long toDoId, ToDoNoteUpdateDto updatedToDo) {
+    @PutMapping("/updateToDo/{toDoId}")
+    public ResponseEntity<Response> updateToDo(@PathVariable Long toDoId, @RequestBody ToDoNoteUpdateDto updatedToDo) {
         Response response = toDoService.updateToDo(toDoId, updatedToDo);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    public ResponseEntity<Response> deleteToDoNote(Long toDoId) {
+    @DeleteMapping("/deleteToDo/{toDoId}")
+    public ResponseEntity<Response> deleteToDoNote(@PathVariable Long toDoId) {
         Response response = toDoService.deleteToDo(toDoId);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
