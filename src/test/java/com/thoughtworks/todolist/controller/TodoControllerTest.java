@@ -4,7 +4,7 @@ import com.thoughtworks.todolist.exception.NoteNotFoundException;
 import com.thoughtworks.todolist.exception.Response;
 import com.thoughtworks.todolist.model.ToDoNote;
 import com.thoughtworks.todolist.model.ToDoDto;
-import com.thoughtworks.todolist.service.ToDoListService;
+import com.thoughtworks.todolist.service.ToDoService;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class TodoControllerTest {
 
     @Mock
-    private ToDoListService toDoListService;
+    private ToDoService toDoService;
 
     @InjectMocks
     private ToDoController controller;
@@ -52,7 +52,7 @@ class TodoControllerTest {
         toDoNoteList.add(toDoNote);
         toDoNoteList.add(toDoNote);
         toDoNoteList.add(toDoNote);
-        when(toDoListService.getToDoList()).thenReturn(toDoNoteList);
+        when(toDoService.getToDoList()).thenReturn(toDoNoteList);
         ResponseEntity<List<ToDoNote>> allToDoNotes = controller.getAllToDoNotes();
         Assert.assertEquals(200,allToDoNotes.getStatusCode().value());
     }
@@ -61,7 +61,7 @@ class TodoControllerTest {
     @Test
     void givenARequestToGetAllToDoNotes_WhenNotAvailable_ShouldThrowExceptionWithStatusCode404() {
         try {
-            when(toDoListService.getToDoList()).thenThrow(new NoteNotFoundException("No Notes!!", HttpStatus.NOT_FOUND));
+            when(toDoService.getToDoList()).thenThrow(new NoteNotFoundException("No Notes!!", HttpStatus.NOT_FOUND));
             ResponseEntity<List<ToDoNote>> allToDoNotes = controller.getAllToDoNotes();
         } catch (NoteNotFoundException e) {
             Assert.assertEquals(404,e.statusCode.value());
@@ -70,7 +70,7 @@ class TodoControllerTest {
 
     @Test
     void givenAToDoNote_WhenAddedToTheDb_ShouldReturnStatuscode200() {
-        when(toDoListService.addToDo(inputToDo)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
+        when(toDoService.addToDo(inputToDo)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
         ResponseEntity<Response> responseEntity = controller.addToDoNote(inputToDo);
         Assert.assertEquals(200,responseEntity.getStatusCode().value());
     }
@@ -78,7 +78,7 @@ class TodoControllerTest {
     @Test
     void givenAnUpdatedToDoNote_WhenExistsInDb_ShouldGetStoredInTheDbAndReturnStatusCode200() {
         ToDoDto updatedToDo = new ToDoDto();
-        when(toDoListService.updateToDo(toDoId,updatedToDo)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
+        when(toDoService.updateToDo(toDoId,updatedToDo)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
         ResponseEntity<Response> responseEntity = controller.updateToDo(toDoId,updatedToDo);
         Assert.assertEquals(200,responseEntity.getStatusCode().value());
     }
@@ -87,7 +87,7 @@ class TodoControllerTest {
     void givenAnUpdatedToDoNote_WhenDoesNotExistsInDb_ShouldThrowAnExceptionWithStatusCode404() {
         try {
             ToDoDto updatedToDo = new ToDoDto();
-            when(toDoListService.updateToDo(toDoId,updatedToDo)).thenThrow(new NoteNotFoundException("Note Not Found!!", HttpStatus.NOT_FOUND));
+            when(toDoService.updateToDo(toDoId,updatedToDo)).thenThrow(new NoteNotFoundException("Note Not Found!!", HttpStatus.NOT_FOUND));
             ResponseEntity<Response> responseEntity = controller.updateToDo(toDoId, updatedToDo);
         } catch(NoteNotFoundException e) {
             Assert.assertEquals(404,e.statusCode.value());
@@ -96,7 +96,7 @@ class TodoControllerTest {
 
     @Test
     void givenAnIdToDeleteAToDo_whenExistsInDbAndGetsDeleted_ShouldReturnStatusCode200() {
-        when(toDoListService.deleteToDo(toDoId)).thenReturn(new Response(HttpStatus.OK.value(),"Note deleted successfully!!"));
+        when(toDoService.deleteToDo(toDoId)).thenReturn(new Response(HttpStatus.OK.value(),"Note deleted successfully!!"));
         ResponseEntity<Response> responseEntity = controller.deleteToDoNote(toDoId);
         Assert.assertEquals(200,responseEntity.getStatusCode().value());
     }
@@ -104,7 +104,7 @@ class TodoControllerTest {
     @Test
     void givenAnIdToDeleteAToDo_whenDoesNotExistInDb_ShouldReturnThrowExceptionWithStatusCode404() {
         try {
-            when(toDoListService.deleteToDo(toDoId)).thenThrow(new NoteNotFoundException("Note Not Found!!", HttpStatus.NOT_FOUND));
+            when(toDoService.deleteToDo(toDoId)).thenThrow(new NoteNotFoundException("Note Not Found!!", HttpStatus.NOT_FOUND));
             ResponseEntity<Response> responseEntity = controller.deleteToDoNote(toDoId);
         } catch (NoteNotFoundException e) {
             Assert.assertEquals(404,e.statusCode.value());

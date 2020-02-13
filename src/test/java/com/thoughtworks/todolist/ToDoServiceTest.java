@@ -6,7 +6,7 @@ import com.thoughtworks.todolist.exception.Response;
 import com.thoughtworks.todolist.model.ToDoNote;
 import com.thoughtworks.todolist.model.ToDoDto;
 import com.thoughtworks.todolist.repository.ToDoRepository;
-import com.thoughtworks.todolist.service.ToDoListService;
+import com.thoughtworks.todolist.service.ToDoService;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-public class ToDoListServiceTest {
+public class ToDoServiceTest {
 
     @Mock
     private ToDoRepository toDoRepository;
@@ -35,7 +35,7 @@ public class ToDoListServiceTest {
     List<ToDoNote> listOfToDos;
 
     @InjectMocks
-    private ToDoListService toDoListService;
+    private ToDoService toDoService;
 
     private ToDoDto dummyTodo;
     private ToDoNote toDoNote;
@@ -58,7 +58,7 @@ public class ToDoListServiceTest {
             List<ToDoNote> expectedListOfToDos = new ArrayList();
             when(toDoRepository.findAll()).thenReturn(expectedListOfToDos);
             when(env.getProperty("status.toDo.notesNotFound")).thenReturn("No Notes!!");
-            List toDos = toDoListService.getToDoList();
+            List toDos = toDoService.getToDoList();
         } catch (NoteNotFoundException e) {
             Assert.assertEquals(404, e.statusCode.value());
         }
@@ -67,14 +67,14 @@ public class ToDoListServiceTest {
     @Test
     void givenARequestToShowAllToDos_WhenDbHasThreeToDosStored_ShouldReturnListOfThreeToDos() {
         when(toDoRepository.findAll()).thenReturn(listOfToDos);
-        List toDoList = toDoListService.getToDoList();
+        List toDoList = toDoService.getToDoList();
         Assert.assertEquals(3, toDoList.size());
     }
 
     @Test
     void givenANewToDo_ShouldGetAddedToTheDb() {
         when(mapper.map(dummyTodo,ToDoNote.class)).thenReturn(toDoNote);
-        Response response = toDoListService.addToDo(dummyTodo);
+        Response response = toDoService.addToDo(dummyTodo);
         verify(toDoRepository).save(toDoNote);
         Assert.assertEquals(200, response.getStatusCode());
     }
@@ -83,7 +83,7 @@ public class ToDoListServiceTest {
     void givenAnIdAndAToDoNoteThatHasBeenEdited_WhenPresentInTheDb_ShouldGetUpdated() {
         Long toDoId = 1L;
         when(toDoRepository.findToDoNoteByToDoId(toDoId)).thenReturn(toDoNote);
-        Response response = toDoListService.updateToDo(toDoId, dummyTodo);
+        Response response = toDoService.updateToDo(toDoId, dummyTodo);
         verify(toDoRepository).save(toDoNote);
         Assert.assertEquals(200,response.getStatusCode());
     }
@@ -94,7 +94,7 @@ public class ToDoListServiceTest {
             Long toDoId = 1L;
             when(toDoRepository.findToDoNoteByToDoId(toDoId)).thenReturn(null);
             when(env.getProperty("status.toDo.noteNotFound")).thenReturn("Note Not Found!!");
-            Response response = toDoListService.updateToDo(toDoId, dummyTodo);
+            Response response = toDoService.updateToDo(toDoId, dummyTodo);
         }catch (NoteNotFoundException e){
             Assert.assertEquals(404,e.statusCode.value());
         }
@@ -105,7 +105,7 @@ public class ToDoListServiceTest {
         Long toDoId = 1L;
         when(toDoRepository.findToDoNoteByToDoId(1L)).thenReturn(toDoNote);
         when(env.getProperty("status.toDo.noteDeleteSucceed")).thenReturn("Note deleted successfully!!");
-        Response response = toDoListService.deleteToDo(toDoId);
+        Response response = toDoService.deleteToDo(toDoId);
         verify(toDoRepository).delete(toDoNote);
         Assert.assertEquals(200, response.getStatusCode());
     }
@@ -116,7 +116,7 @@ public class ToDoListServiceTest {
             Long toDoId = 1L;
             when(toDoRepository.findToDoNoteByToDoId(1L)).thenReturn(null);
             when(env.getProperty("status.toDo.noteNotFound")).thenReturn("Note Not Found!!");
-            Response response = toDoListService.deleteToDo(toDoId);
+            Response response = toDoService.deleteToDo(toDoId);
         } catch (NoteNotFoundException e) {
             Assert.assertEquals(404, e.statusCode.value());
         }

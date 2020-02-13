@@ -3,7 +3,7 @@ package com.thoughtworks.todolist.controller;
 import com.thoughtworks.todolist.exception.Response;
 import com.thoughtworks.todolist.model.ToDoNote;
 import com.thoughtworks.todolist.model.ToDoDto;
-import com.thoughtworks.todolist.service.ToDoListService;
+import com.thoughtworks.todolist.service.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +16,9 @@ import java.util.List;
 public class ToDoController {
 
     @Autowired
-    private ToDoListService toDoService;
+    private ToDoService toDoService;
 
-    public ToDoController(ToDoListService toDoService) {
+    public ToDoController(ToDoService toDoService) {
         this.toDoService = toDoService;
     }
 

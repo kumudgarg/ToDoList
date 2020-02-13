@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ToDoListService {
+public class ToDoService {
 
     @Autowired
     private Environment environment;
