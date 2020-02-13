@@ -29,7 +29,7 @@ public class ToDoController {
     }
 
     @PostMapping("/addToDoNote")
-    public ResponseEntity<Response> addToDoNote(@RequestBody ToDoNote toDoNote) {
+    public ResponseEntity<Response> addToDoNote(@RequestBody ToDoNoteUpdateDto toDoNote) {
         Response response = toDoService.addToDo(toDoNote);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }

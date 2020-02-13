@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
 import org.springframework.core.env.Environment;
 
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class ToDoListServiceTest {
     private ToDoRepository toDoRepository;
 
     @Mock
+    private ModelMapper mapper;
+
+    @Mock
     private Environment env;
 
     List<ToDoNote> listOfToDos;
@@ -33,9 +37,14 @@ public class ToDoListServiceTest {
     @InjectMocks
     private ToDoListService toDoListService;
 
+    private ToDoNoteUpdateDto dummyTodo;
+    private ToDoNote toDoNote;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
+        this.dummyTodo = new ToDoNoteUpdateDto();
+        this.toDoNote = new ToDoNote();
         this.listOfToDos = new ArrayList();
         ToDoNote dummyToDo = new ToDoNote();
         listOfToDos.add(dummyToDo);
@@ -64,20 +73,18 @@ public class ToDoListServiceTest {
 
     @Test
     void givenANewToDo_ShouldGetAddedToTheDb() {
-        ToDoNote dummyTodo = new ToDoNote();
+        when(mapper.map(dummyTodo,ToDoNote.class)).thenReturn(toDoNote);
         Response response = toDoListService.addToDo(dummyTodo);
-        verify(toDoRepository).save(dummyTodo);
+        verify(toDoRepository).save(toDoNote);
         Assert.assertEquals(200, response.getStatusCode());
     }
 
     @Test
     void givenAnIdAndAToDoNoteThatHasBeenEdited_WhenPresentInTheDb_ShouldGetUpdated() {
         Long toDoId = 1L;
-        ToDoNoteUpdateDto updatedNote = new ToDoNoteUpdateDto("updated note");
-        ToDoNote existingNote = new ToDoNote(1L,"exisiting message");
-        when(toDoRepository.findToDoNoteByToDoId(toDoId)).thenReturn(existingNote);
-        Response response = toDoListService.updateToDo(toDoId, updatedNote);
-        verify(toDoRepository).save(existingNote);
+        when(toDoRepository.findToDoNoteByToDoId(toDoId)).thenReturn(toDoNote);
+        Response response = toDoListService.updateToDo(toDoId, dummyTodo);
+        verify(toDoRepository).save(toDoNote);
         Assert.assertEquals(200,response.getStatusCode());
     }
 
@@ -85,10 +92,9 @@ public class ToDoListServiceTest {
     void givenAnIdAndAToDoNoteThatHasBeenEdited_WhenNotPresentInTheDb_ShouldThrowException() {
         try {
             Long toDoId = 1L;
-            ToDoNoteUpdateDto updatedNote = new ToDoNoteUpdateDto("updated note");
             when(toDoRepository.findToDoNoteByToDoId(toDoId)).thenReturn(null);
             when(env.getProperty("status.toDo.noteNotFound")).thenReturn("Note Not Found!!");
-            Response response = toDoListService.updateToDo(toDoId, updatedNote);
+            Response response = toDoListService.updateToDo(toDoId, dummyTodo);
         }catch (NoteNotFoundException e){
             Assert.assertEquals(404,e.statusCode.value());
         }
@@ -97,11 +103,10 @@ public class ToDoListServiceTest {
     @Test
     void givenAnIdOfToDoNote_WhenPresentInTheDb_ShouldGetDeleted() {
         Long toDoId = 1L;
-        ToDoNote existingToDo = new ToDoNote();
-        when(toDoRepository.findToDoNoteByToDoId(1L)).thenReturn(existingToDo);
+        when(toDoRepository.findToDoNoteByToDoId(1L)).thenReturn(toDoNote);
         when(env.getProperty("status.toDo.noteDeleteSucceed")).thenReturn("Note deleted successfully!!");
         Response response = toDoListService.deleteToDo(toDoId);
-        verify(toDoRepository).delete(existingToDo);
+        verify(toDoRepository).delete(toDoNote);
         Assert.assertEquals(200, response.getStatusCode());
     }
 
@@ -109,7 +114,6 @@ public class ToDoListServiceTest {
     void givenAnIdOfToDoNote_WhenNotPresentInTheDb_ShouldThrowException() {
         try {
             Long toDoId = 1L;
-            ToDoNote existingToDo = new ToDoNote();
             when(toDoRepository.findToDoNoteByToDoId(1L)).thenReturn(null);
             when(env.getProperty("status.toDo.noteNotFound")).thenReturn("Note Not Found!!");
             Response response = toDoListService.deleteToDo(toDoId);
@@ -118,4 +122,5 @@ public class ToDoListServiceTest {
         }
     }
 }
+
 

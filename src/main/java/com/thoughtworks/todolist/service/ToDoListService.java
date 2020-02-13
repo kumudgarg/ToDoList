@@ -5,6 +5,7 @@ import com.thoughtworks.todolist.exception.Response;
 import com.thoughtworks.todolist.model.ToDoNote;
 import com.thoughtworks.todolist.model.ToDoNoteUpdateDto;
 import com.thoughtworks.todolist.repository.ToDoRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,9 @@ public class ToDoListService {
     @Autowired
     private ToDoRepository toDoRepository;
 
+    @Autowired
+    private ModelMapper mapper;
+
     public List<ToDoNote> getToDoList() {
         List<ToDoNote> toDoNotes = toDoRepository.findAll();
         if(toDoNotes.isEmpty()) {
@@ -29,8 +33,9 @@ public class ToDoListService {
         return toDoNotes;
     }
 
-    public Response addToDo(ToDoNote toDo) {
-        toDoRepository.save(toDo);
+    public Response addToDo(ToDoNoteUpdateDto toDoDto) {
+        ToDoNote toDoNote = mapper.map(toDoDto, ToDoNote.class);
+        toDoRepository.save(toDoNote);
         return new Response(HttpStatus.OK.value(),environment.getProperty("status.toDo.noteAddSucceed"));
     }
 

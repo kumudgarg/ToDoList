@@ -34,9 +34,12 @@ class TodoControllerTest {
 
     private long toDoId;
 
+    private ToDoNoteUpdateDto inputToDo;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
+        this.inputToDo = new ToDoNoteUpdateDto();
         this.toDoNote = new ToDoNote();
         this.toDoId = 1L;
 
@@ -67,8 +70,8 @@ class TodoControllerTest {
 
     @Test
     void givenAToDoNote_WhenAddedToTheDb_ShouldReturnStatuscode200() {
-        when(toDoListService.addToDo(toDoNote)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
-        ResponseEntity<Response> responseEntity = controller.addToDoNote(toDoNote);
+        when(toDoListService.addToDo(inputToDo)).thenReturn(new Response(HttpStatus.OK.value(),"Note created successfully!!"));
+        ResponseEntity<Response> responseEntity = controller.addToDoNote(inputToDo);
         Assert.assertEquals(200,responseEntity.getStatusCode().value());
     }
 
