@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
+
 
 @Entity
 public class ToDoNote {
@@ -14,17 +16,25 @@ public class ToDoNote {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Getter
     @Setter
-    private Long toDoId;
+    private Long id;
+
 
     @Getter
     @Setter
-    String toDoDescription;
+    String description;
+
+    @Getter @Setter
+    public LocalDateTime timestamp;
+
+    @Getter @Setter
+    boolean isToDoCompleted;
 
     public ToDoNote() {
     }
 
-    public ToDoNote(long toDoId, String toDoDescription) {
-        this.toDoId = toDoId;
-        this.toDoDescription = toDoDescription;
+    public ToDoNote(String description, LocalDateTime timestamp, boolean isToDoCompleted) {
+        this.description = description;
+        this.timestamp = timestamp;
+        this.isToDoCompleted = isToDoCompleted;
     }
 }
