@@ -83,7 +83,7 @@ public class ToDoServiceTest {
 
     @Test
     void givenAnIdAndAToDoNoteThatHasBeenEdited_WhenPresentInTheDb_ShouldGetUpdated() {
-        when(toDoRepository.findToDoNoteByToDoId(toDoId)).thenReturn(toDoNote);
+        when(toDoRepository.findToDoNoteById(toDoId)).thenReturn(toDoNote);
         Response response = toDoService.updateToDo(toDoId, dummyTodo);
         verify(toDoRepository).save(toDoNote);
         Assert.assertEquals(200, response.getStatusCode());
@@ -92,7 +92,7 @@ public class ToDoServiceTest {
     @Test
     void givenAnIdAndAToDoNoteThatHasBeenEdited_WhenNotPresentInTheDb_ShouldThrowException() {
         try {
-            when(toDoRepository.findToDoNoteByToDoId(toDoId)).thenReturn(null);
+            when(toDoRepository.findToDoNoteById(toDoId)).thenReturn(null);
             when(env.getProperty("status.toDo.noteNotFound")).thenReturn("Note Not Found!!");
             Response response = toDoService.updateToDo(toDoId, dummyTodo);
         } catch (NoteNotFoundException e) {
@@ -102,7 +102,7 @@ public class ToDoServiceTest {
 
     @Test
     void givenAnIdOfToDoNote_WhenPresentInTheDb_ShouldGetDeleted() {
-        when(toDoRepository.findToDoNoteByToDoId(1L)).thenReturn(toDoNote);
+        when(toDoRepository.findToDoNoteById(1L)).thenReturn(toDoNote);
         when(env.getProperty("status.toDo.noteDeleteSucceed")).thenReturn("Note deleted successfully!!");
         Response response = toDoService.deleteToDo(toDoId);
         verify(toDoRepository).delete(toDoNote);
@@ -112,7 +112,7 @@ public class ToDoServiceTest {
     @Test
     void givenAnIdOfToDoNote_WhenNotPresentInTheDb_ShouldThrowException() {
         try {
-            when(toDoRepository.findToDoNoteByToDoId(1L)).thenReturn(null);
+            when(toDoRepository.findToDoNoteById(1L)).thenReturn(null);
             when(env.getProperty("status.toDo.noteNotFound")).thenReturn("Note Not Found!!");
             Response response = toDoService.deleteToDo(toDoId);
         } catch (NoteNotFoundException e) {

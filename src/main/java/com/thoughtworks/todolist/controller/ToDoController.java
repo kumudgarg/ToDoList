@@ -13,7 +13,7 @@ import java.util.List;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/toDoNote")
+@RequestMapping("/toDo")
 public class ToDoController {
 
     @Autowired
@@ -23,7 +23,7 @@ public class ToDoController {
         this.toDoService = toDoService;
     }
 
-    @GetMapping("/getAll")
+    @GetMapping("/")
     public ResponseEntity<List<ToDoNote>> getAllToDoNotes() {
         List<ToDoNote> toDoList = toDoService.getToDoList();
         return new ResponseEntity<>(toDoList, HttpStatus.OK);

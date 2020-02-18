@@ -11,6 +11,9 @@ public class Response {
     @Getter @Setter
     private String message;
 
+    @Getter @Setter
+    private Long id;
+
     public Response() {
     }
 
@@ -22,6 +25,12 @@ public class Response {
 
     public Response(String message) {
         super();
+        this.message = message;
+    }
+
+    public Response(Long id, int statusCode, String message) {
+        this.id = id;
+        this.statusCode = statusCode;
         this.message = message;
     }
 }

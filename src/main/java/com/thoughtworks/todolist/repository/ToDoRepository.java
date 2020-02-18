@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ToDoRepository extends JpaRepository<ToDoNote,Long> {
 
-    public ToDoNote findToDoNoteByToDoId(Long id);
+    public ToDoNote findToDoNoteById(Long id);
 
 }

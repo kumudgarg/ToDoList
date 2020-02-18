@@ -27,14 +27,14 @@ public class ToDoNote {
     public LocalDateTime timestamp;
 
     @Getter @Setter
-    boolean isToDoCompleted;
+    boolean isCompleted;
 
     public ToDoNote() {
     }
 
-    public ToDoNote(String description, LocalDateTime timestamp, boolean isToDoCompleted) {
+    public ToDoNote(String description, LocalDateTime timestamp, boolean isCompleted) {
         this.description = description;
         this.timestamp = timestamp;
-        this.isToDoCompleted = isToDoCompleted;
+        this.isCompleted = isCompleted;
     }
 }

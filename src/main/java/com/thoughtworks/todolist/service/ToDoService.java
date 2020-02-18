@@ -37,26 +37,26 @@ public class ToDoService {
     public Response addToDo(ToDoDto toDoDto) {
          ToDoNote toDoNote = mapper.map(toDoDto, ToDoNote.class);
          toDoNote.setTimestamp(LocalDateTime.now());
-         toDoNote.setToDoCompleted(false);
+         toDoNote.setCompleted(false);
          toDoRepository.save(toDoNote);
-        return new Response(HttpStatus.OK.value(),environment.getProperty("status.toDo.noteAddSucceed"));
+        return new Response(toDoNote.getId(),HttpStatus.OK.value(),environment.getProperty("status.toDo.noteAddSucceed"));
     }
 
     public Response updateToDo(Long id, ToDoDto updatedToDoNote) {
-        ToDoNote toDoNote = toDoRepository.findToDoNoteByToDoId(id);
+        ToDoNote toDoNote = toDoRepository.findToDoNoteById(id);
         if(toDoNote == null){
             throw new NoteNotFoundException(environment.getProperty("status.toDo.noteNotFound"),HttpStatus.NOT_FOUND);
         }
         toDoNote.setDescription(updatedToDoNote.getDescription());
         toDoNote.setTimestamp(LocalDateTime.now());
-        toDoNote.setToDoCompleted(updatedToDoNote.isCompleted());
+        toDoNote.setCompleted(updatedToDoNote.isCompleted());
         toDoRepository.save(toDoNote);
         return new Response(HttpStatus.OK.value(),environment.getProperty("status.toDo.noteUpdatedSucceed"));
     }
 
 
     public Response deleteToDo(Long toDoId) {
-        ToDoNote toDoNote = toDoRepository.findToDoNoteByToDoId(toDoId);
+        ToDoNote toDoNote = toDoRepository.findToDoNoteById(toDoId);
         if(toDoNote == null){
             throw new NoteNotFoundException(environment.getProperty("status.toDo.noteNotFound"),HttpStatus.NOT_FOUND);
         }
