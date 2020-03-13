@@ -37,4 +37,12 @@ public class ToDoNote {
         this.timestamp = timestamp;
         this.isCompleted = isCompleted;
     }
+
+    public ToDoNote(String ToDoNote) {
+    }
+
+
+    public ToDoNote(int id, String description) {
+
+    }
 }

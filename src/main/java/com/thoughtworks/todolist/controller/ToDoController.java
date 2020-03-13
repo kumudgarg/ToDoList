@@ -11,10 +11,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/toDo")
 public class ToDoController {
+
+    public ToDoController() {
+    }
 
     @Autowired
     private ToDoService toDoService;
